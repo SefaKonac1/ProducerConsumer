@@ -22,7 +22,8 @@ class MyQueue{
         T pop();
         void push(T& data);
         virtual ~MyQueue();
-        
+
+        uint_least32_t sumAll();
         inline int getSize(){return qsize;}
         inline bool isEmpty() const{return (head == NULL)? 1 : 0;}
     
@@ -37,7 +38,7 @@ class MyQueue{
 
         pthread_mutex_t mutex;
 
-        //void display();
+        
     
 };
 

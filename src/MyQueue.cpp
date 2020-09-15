@@ -60,12 +60,12 @@ MyQueue<T>::~MyQueue(){
     }   
 }
 
-/*
-void MyQueue::display()
+template <typename T>
+uint_least32_t MyQueue<T>::sumAll()
 {
     if(!isEmpty())
     {
-        for(this->temp = this->head; this->temp != nullptr; this->temp=this->temp->next){
+        for(this->temp = this->head; this->temp != NULL; this->temp=this->temp->next){
             std::cout << this->temp->data << " ";
             std::cout << std::endl;
         }
@@ -74,7 +74,6 @@ void MyQueue::display()
     else
     {
         std::cout << "Queue is Empty!" << std::endl;
-    }
-   
+    }   
 }
-*/
+
