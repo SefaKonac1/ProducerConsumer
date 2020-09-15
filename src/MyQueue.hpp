@@ -27,6 +27,8 @@ class MyQueue{
         inline int getSize(){return qsize;}
         inline bool isEmpty() const{return (head == NULL)? 1 : 0;}
     
+        T operator[](int i);
+
     private:
     
         int qsize;

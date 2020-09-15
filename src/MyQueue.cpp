@@ -63,17 +63,29 @@ MyQueue<T>::~MyQueue(){
 template <typename T>
 uint_least32_t MyQueue<T>::sumAll()
 {
+    pthread_mutex_lock(&mutex);
+    uint_least32_t sum = 0;
     if(!isEmpty())
     {
         for(this->temp = this->head; this->temp != NULL; this->temp=this->temp->next){
-            std::cout << this->temp->data << " ";
-            std::cout << std::endl;
+            sum += this->temp->data.number;   
         }
-
+       
     }
-    else
-    {
-        std::cout << "Queue is Empty!" << std::endl;
-    }   
+    pthread_mutex_unlock(&mutex);
+    return sum;
 }
 
+template<typename T>
+T MyQueue<T>::operator[](int i){
+
+    pthread_mutex_lock(&mutex);
+    this->temp = this->head;
+
+    for (int j = 0; j < i && this->temp != NULL; j++){
+        this->temp = this->temp->next;
+    }
+    pthread_mutex_unlock(&mutex);
+
+    return this->temp->data;
+}

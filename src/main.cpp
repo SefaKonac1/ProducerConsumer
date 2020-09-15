@@ -60,7 +60,7 @@ void* producer(void* args){
         /*wake producer thread.*/ 
         /*produce random awake time between range 100-300micro seconds */  
         time_t timeout = (100 + rand() % 200 ) ;
-
+        usleep(timeout);
         //if(ret == ETIMEDOUT){}
         
         Data sendData;
@@ -73,7 +73,7 @@ void* producer(void* args){
         
        
         pthread_mutex_unlock(&lock);
-        usleep(timeout);
+       
     }
     fprintf(stderr,"Procuder Thread is dying...\n");
     pthread_exit(NULL);
@@ -81,26 +81,47 @@ void* producer(void* args){
 
 void* consumer(void* args){
 
+    int counter = 0;
+    uint_least64_t sumOfNum = 0,elapsedTime = 0;
     int fd = *(int*)args;
     
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    
     pthread_mutex_lock(&lock);
+
     while(!stop){
         
         if(!myq.isEmpty()){
-            Data receivedData = myq.pop();
-            sumOfNum += receivedData.number;    
+       
+            Data receivedData = myq[counter];
 
-            std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-            /*measure 1 seconds for reset total summarization.*/
-            if(std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() >= 1){
+            sumOfNum += receivedData.number;
+            elapsedTime += receivedData.timeout;
+            usleep(receivedData.timeout);
             
-                sumOfNum = 0;
-               
-                begin = std::chrono::steady_clock::now();
+            fprintf(stderr,"size: %d counter: %d eTime : %ld  Time Limit: %ld\n",myq.getSize(),counter,elapsedTime,TIME_LIMIT_USEC);
+
+            if(elapsedTime >= TIME_LIMIT_USEC){
+                
+                
+                while(elapsedTime >= TIME_LIMIT_USEC){
+
+                    Data popData = myq.pop();
+
+                    sumOfNum -= popData.number;
+                    elapsedTime -= popData.timeout;
+                    
+                    counter--;
+                }
+                
+
             }
+            if(myq.getSize() - 1 > counter){
+                counter++;
+            }
+            
+            
             writeFile(1,fd,sumOfNum);
+            
+           
         }
     
         

@@ -23,8 +23,8 @@
 
 typedef struct Data{
     Data():number(0),timeout(0){}
-    uint_least32_t number;
-    uint_least32_t timeout;
+    uint_least64_t number;
+    uint_least64_t timeout;
 }Data;
 
 typedef enum{
@@ -39,10 +39,12 @@ MyQueue<Data> myq;
 struct timeval tv;
 struct timespec ts;
 
-int_least32_t sumOfNum = 0;
 volatile unsigned int stop = 0;
 
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t lock,flock = PTHREAD_MUTEX_INITIALIZER;
+
+const std::chrono::seconds TIME_LIMIT_SEC(2);
+const uint64_t TIME_LIMIT_USEC = std::chrono::duration_cast<std::chrono::microseconds>(TIME_LIMIT_SEC).count();
 
 std::chrono::steady_clock::time_point systemInit,systemTerminated,timePoint;
